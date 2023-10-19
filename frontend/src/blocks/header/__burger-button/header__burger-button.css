@@ -1,0 +1,28 @@
+.header__burger-button {
+    background: url(../../../images/burger_menu.svg) center no-repeat;
+    border: none;
+    background-color: transparent;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    opacity: 1;
+    transition: opacity 0.3s ease-in;
+    -webkit-transition: opacity 0.3s ease-in;
+    -moz-transition: opacity 0.3s ease-in;
+    -ms-transition: opacity 0.3s ease-in;
+    -o-transition: opacity 0.3s ease-in;
+    cursor: pointer;
+    display: none;
+    align-self: center;
+}
+
+.header__burger-button:hover {
+    opacity: 0.6;
+}
+
+@media screen and (max-width: 628px) {
+    .header__burger-button {
+        display: flex;
+        margin-right: 27px;
+    }
+}

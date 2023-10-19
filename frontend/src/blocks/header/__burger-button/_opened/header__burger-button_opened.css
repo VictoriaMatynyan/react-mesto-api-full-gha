@@ -1,0 +1,13 @@
+.header__burger-button_opened {
+    background-image: url(../../../../images/close_button.svg);
+    display: block;
+    width: 20px;
+    height: 20px;
+    align-self: flex-end;
+}
+
+@media screen and (min-width: 629px) {
+    .header__burger-button_opened {
+        display: none;
+    }
+}

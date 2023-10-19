@@ -1,16 +1,27 @@
 [![Статус тестов](../../actions/workflows/tests.yml/badge.svg)](../../actions/workflows/tests.yml)
 
-# react-mesto-api-full
-Репозиторий для приложения проекта `Mesto`, включающий фронтенд и бэкенд части приложения со следующими возможностями: авторизации и регистрации пользователей, операции с карточками и пользователями. Бэкенд расположите в директории `backend/`, а фронтенд - в `frontend/`. 
-  
-Пожалуйста, прикрепите в это описание ссылку на сайт, размещенный на Яндекс.Облаке.
+# (Final project "Mesto")[https://projectmesto.nomoredomainsrocks.ru/sign-in]
+The final training project Mesto(eng. 'Place') at [Yandex Praktikum](https://practicum.yandex.ru/) for web-developers combines the [frontend](https://github.com/VictoriaMatynyan/react-mesto-auth) and [backend](https://github.com/VictoriaMatynyan/express-mesto-gha) parts of the application with the following features: 
+* User registration and authorization;
+* User data modification: 
+    - name,
+    - about, 
+    - avatar;
+* Operations with cards: 
+    - adding cards, 
+    - deleting only owner's cards (other users' cards cannot be deleted),
+    - liking a card,
+    - unliking a card,
+    - opening a modal window for a card.
 
-Адрес репозитория: https://github.com/...
+## Applied decisions
 
-## Ссылки на проект
+Repository's URL: https://github.com/VictoriaMatynyan/react-mesto-api-full-gha
 
-IP-адрес x.x.x.x
+## Project links
 
-Frontend https://...
+IP address: 158.160.59.207
 
-Backend https://...
+Frontend: https://projectmesto.nomoredomainsrocks.ru
+
+Backend: https://api.projectmesto.nomoredomainsrocks.ru

@@ -1,0 +1,23 @@
+.authentication-form {
+    max-width: 358px;
+    margin: 0 auto;
+    padding: 60px 0 112px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: none;
+    background-color: #000;
+}
+
+@media screen and (max-width: 500px) {
+    .authentication-form {
+        padding: 40px 0 112px;
+    }
+    
+}
+
+@media screen and (max-width: 419px) {
+    .authentication-form {
+        margin: 0px 30px;
+    }
+}

@@ -1,0 +1,43 @@
+.element {
+    width: 100%;
+    position: relative;
+    margin: 0;
+    background-color: #fff;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+}
+
+@media screen and (max-width: 918px) {
+    .element {
+        max-width: 30.72vw; 
+    }
+}
+
+
+@media screen and (max-width: 700px) {
+    .element {
+        max-width: 282px;
+        justify-self: center;
+    }
+}
+
+@media screen and (max-width: 622px) {
+    .element {
+        max-width: 45.3vw; 
+    }
+}
+
+@media screen and (max-width: 533px) {
+    .element {
+        max-width: 282px;
+    }
+}
+
+@media screen and (max-width: 319px) {
+    .element {
+        max-width: 80.4vw;
+    }
+}

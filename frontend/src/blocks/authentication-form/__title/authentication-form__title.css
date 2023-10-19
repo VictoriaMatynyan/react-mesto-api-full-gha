@@ -1,0 +1,15 @@
+.authentication-form__title {
+    margin: 0;
+    font-size: 24px;
+    line-height: 29.05px;
+    font-weight: 900;
+    color: #fff;
+    text-align: center;
+}
+
+@media screen and (max-width: 360px) {
+    .authentication-form__title {
+        font-size: 20px;
+        line-height: 24.2px;
+    }
+}

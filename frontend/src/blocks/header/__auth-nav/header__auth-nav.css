@@ -1,0 +1,13 @@
+.header__auth-nav {
+    display: flex;
+    justify-content: end;
+}
+
+@media screen and (max-width: 628px) {
+    .header__auth-nav {
+        display: none;
+    }
+}
+
+/* P.S.: если убрать visibility (none), то место в шапке всё равно будет занято,
+поэтому здесь нужно использовать display: none */

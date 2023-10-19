@@ -1,0 +1,24 @@
+.popup__image-container {
+    margin: 90px auto 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+}
+    
+@media screen and (max-width: 1279px) {
+    .popup__image-container {
+    width: 63.8vw;
+    }
+}
+    
+@media screen and (max-width: 897px) {
+    .popup__image-container {
+        margin-top: 136px;
+    }
+}
+
+@media screen and (max-width: 364px) {
+    .popup__image-container {
+        min-width: 240px;
+    }
+}

@@ -22,6 +22,6 @@ Repository's URL: https://github.com/VictoriaMatynyan/react-mesto-api-full-gha
 
 IP address: 158.160.59.207
 
-Frontend: https://projectmesto.nomoredomainsrocks.ru
+Frontend <https://projectmesto.nomoredomainsrocks.ru>
 
-Backend: https://api.projectmesto.nomoredomainsrocks.ru
+Backend <https://api.projectmesto.nomoredomainsrocks.ru>

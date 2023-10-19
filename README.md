@@ -1,6 +1,6 @@
 [![Статус тестов](../../actions/workflows/tests.yml/badge.svg)](../../actions/workflows/tests.yml)
 
-# (Final project "Mesto")[https://projectmesto.nomoredomainsrocks.ru/sign-in]
+# [Final project "Mesto"](https://projectmesto.nomoredomainsrocks.ru/sign-in)
 The final training project Mesto(eng. 'Place') at [Yandex Praktikum](https://practicum.yandex.ru/) for web-developers combines the [frontend](https://github.com/VictoriaMatynyan/react-mesto-auth) and [backend](https://github.com/VictoriaMatynyan/express-mesto-gha) parts of the application with the following features: 
 * User registration and authorization;
 * User data modification: 

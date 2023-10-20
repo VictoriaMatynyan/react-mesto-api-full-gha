@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const centralizedErrorHandler = require('./middlewares/errorHandler');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes/index');
 const NotFoundError = require('./errors/notFound');
 // 127.0.0.1 - вместо localhost, т.к. node -v = 18
@@ -13,13 +14,15 @@ const app = express();
 app.use(express.json()); // вместо body parser
 app.use(cookieParser());
 
-// здесь будет логгер запросов
+// подключаем логгер запросов
+app.use(requestLogger);
 
 // подключаем корневой роут для пользователей и карточек
 app.use(router);
 app.use('*', (req, res, next) => next(new NotFoundError('Запрашиваемый ресурс не найден')));
 
-// здесь будет логгер ошибок
+// подключаем логгер ошибок
+app.use(errorLogger);
 
 // обработчики ошибок валидации
 app.use(errors());

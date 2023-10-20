@@ -14,7 +14,25 @@ The final training project Mesto(eng. 'Place') at [Yandex Praktikum](https://pra
     - unliking a card,
     - opening a modal window for a card.
 
-## Applied decisions
+## Technologies applied
+
++ `BEM(nested)`
++ `React and JSX`
++ `Vite`
++ `Node.js` 
++ `Express`
++ `MongoDB`
++ `Mongoose`
++ `Postman`
++ `Remote Virtual Machine (created at Yandex.Cloud)`
++ `Automated testing`
+
+## Backend launch 
+* `git clone git@github.com:VictoriaMatynyan/express-mesto-gha.git` — clone the repository using SSH code;
+  -  `git clone https://github.com/VictoriaMatynyan/express-mesto-gha.git` — if you'd like to clone the repo via https-link;
+* `npm install` — install the dependencies;
+* `npm run start` — launch the server;   
+* `npm run dev` — launch the server with hot-reload
 
 Repository's URL: https://github.com/VictoriaMatynyan/react-mesto-api-full-gha
 

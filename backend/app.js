@@ -5,12 +5,16 @@ const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const centralizedErrorHandler = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const cors = require('./middlewares/corsHandler');
 const router = require('./routes/index');
 const NotFoundError = require('./errors/notFound');
 // 127.0.0.1 - вместо localhost, т.к. node -v = 18
 const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
 const app = express();
+
+app.use(cors);
+
 app.use(express.json()); // вместо body parser
 app.use(cookieParser());
 

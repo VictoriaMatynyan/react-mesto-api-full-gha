@@ -1,4 +1,5 @@
-export const BASE_URL = 'https://auth.nomoreparties.co';
+// обновляем адрес api
+export const BASE_URL = 'https://api.mestoproject.nomoredomainsrocks.ru';
 
 // проверяем корректность запроса на сервер
 export function validateResponse(res) {
@@ -16,6 +17,7 @@ export const register = (email, password) => {
             'Content-Type': 'application/json',  // Indicates that the request body format is JSON
         },
         body: JSON.stringify({ email, password }),
+        // credentials: 'include'
     })
     .then(validateResponse)
 }
@@ -28,6 +30,7 @@ export const login = (email, password) => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
+        // credentials: 'include'
     })
     .then(validateResponse)
 }
@@ -40,6 +43,7 @@ export const checkToken = (token) => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
         },
+        // credentials: 'include'
     })
     .then(validateResponse)
 }

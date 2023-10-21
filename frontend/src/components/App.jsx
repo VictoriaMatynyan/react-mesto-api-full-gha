@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import Header from './Header.jsx';
 import Main from './Main.jsx';
@@ -43,6 +43,7 @@ function App() {
   const [cardToBeDeleted, setCardToBeDeleted] = useState(null);
 
   // стейт для отображения e-mail пользователя
+  // eslint-disable-next-line no-unused-vars
   const [userEmail, setUserEmail] = useState('');
 
   // создаём стейт для индикаторов загрузки запросов
@@ -66,29 +67,45 @@ function App() {
       }
   }, [loggedIn]);
 
-  // сохраняем email   
-  useEffect(() => {
-    const currentEmail = localStorage.getItem('userName');
-    currentEmail ? setUserEmail(currentEmail) : setUserEmail('');
-  }, [])
+  // // сохраняем email   
+  // useEffect(() => {
+  //   const currentEmail = localStorage.getItem('userName');
+  //   currentEmail ? setUserEmail(currentEmail) : setUserEmail('');
+  // }, [])
 
-  // создаём проверку на jwt в локальном хранилище
-  const handleTokenCheck = (jwt) => {
-    auth.checkToken(jwt)
-    .then((res) => {
-      if(res) {
-        setLoggedIn(true);
-        navigate('/', {replace: true});
-      }
-    })
-  }
+  // // создаём проверку на jwt в локальном хранилище
+  // const handleTokenCheck = (jwt) => {
+  //   auth.checkToken(jwt)
+  //   .then((res) => {
+  //     if(res) {
+  //       setLoggedIn(true);
+  //       navigate('/', {replace: true});
+  //     }
+  //   })
+  // }
+
+  // useEffect(() => {
+  //   const jwt = localStorage.getItem('jwt');
+  //   if (jwt) {
+  //     handleTokenCheck(jwt);
+  //   }
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     if (jwt) {
-      handleTokenCheck(jwt);
+      auth.checkToken(jwt)
+        .then((res) => {
+          if (res) {
+            setUserEmail(res.email);
+            setLoggedIn(true);
+            navigate("/", { replace: true });
+          }
+        })
+        .catch((err) => console.log(err));
     }
-  }, []);
+  }, [loggedIn, navigate]);
 
   const handleRegistration = (email, password) => {
     auth.register(email, password)
@@ -96,10 +113,10 @@ function App() {
       if (!res || res.statusCode === 400) {  
         setIsSucceeded(false);
         setInfoTooltipOpen(true);
-      } else { // здесь мы не проверяем на jwt - его в параметрах запроса нет
+      } else {
         setIsSucceeded(true); // если успех - открываем радостный попап
         setInfoTooltipOpen(true);
-        navigate('/', {replace: true}); // и переадресовываем пользователя на главную страницу
+        navigate('/sign-in', {replace: true}); // и переадресовываем пользователя на главную страницу
       }
     })
     .catch((err) => {
@@ -115,8 +132,8 @@ function App() {
       if (res.statusCode === 401) throw new Error('Ошибка авторизации');
       if (res) {
         localStorage.setItem('jwt', res.token); // сервер возвращает token, поэтому res.jwt = undefined, а res.token = токену
-        localStorage.setItem('userName', email); // сохраняем данные пользователя, чтобы не вводить их повторно
-        localStorage.setItem('userPassword', password);
+        setUserEmail(res.email); // сохраняем данные пользователя, чтобы не вводить их повторно
+        // localStorage.setItem('userPassword', password);
         setLoggedIn(true);
         navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
       }
@@ -323,10 +340,3 @@ function App() {
 export default App;
 
 // Routes - аналог компонента Switch в React Router 5
-
-// проверочный костыль
-  // useEffect(() => {
-  //   if(loggedIn) {
-  //     navigate('/');
-  //   }
-  // }, [loggedIn]);

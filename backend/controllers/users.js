@@ -45,12 +45,15 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = generateToken({ _id: user._id });
-      res.cookie('jwt', token, {
-        maxAge: 3600000,
-        httpOnly: true,
-        sameSite: true,
-        secure: true,
-      });
+      // передаём токен в заголовке
+      res.status(Statuses.OK_REQUEST).send({ token });
+      // сохраняем токен в куках
+      // res.cookie('jwt', token, {
+      //   maxAge: 3600000,
+      //   httpOnly: true,
+      //   sameSite: true,
+      //   secure: true,
+      // });
       return res.send({ token });
     })
     .catch(next);

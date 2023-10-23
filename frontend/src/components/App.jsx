@@ -67,45 +67,28 @@ function App() {
       }
   }, [loggedIn]);
 
-  // // сохраняем email   
-  // useEffect(() => {
-  //   const currentEmail = localStorage.getItem('userName');
-  //   currentEmail ? setUserEmail(currentEmail) : setUserEmail('');
-  // }, [])
-
-  // // создаём проверку на jwt в локальном хранилище
-  // const handleTokenCheck = (jwt) => {
-  //   auth.checkToken(jwt)
-  //   .then((res) => {
-  //     if(res) {
-  //       setLoggedIn(true);
-  //       navigate('/', {replace: true});
-  //     }
-  //   })
-  // }
-
-  // useEffect(() => {
-  //   const jwt = localStorage.getItem('jwt');
-  //   if (jwt) {
-  //     handleTokenCheck(jwt);
-  //   }
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
+  // сохраняем email   
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (jwt) {
-      auth.checkToken(jwt)
-        .then((res) => {
-          if (res) {
-            setUserEmail(res.email);
-            setLoggedIn(true);
-            navigate("/", { replace: true });
-          }
-        })
-        .catch((err) => console.log(err));
+    const currentEmail = localStorage.getItem('userName');
+    currentEmail ? setUserEmail(currentEmail) : setUserEmail('');
+  }, [])
+
+  // создаём проверку на token в локальном хранилище
+  useEffect(() => {
+    const handleTokenCheck = (token) => {
+    auth.checkToken(token)
+    .then((res) => {
+      if(res) {
+        setLoggedIn(true);
+        navigate('/', {replace: true});
+      }
+    })
+    };
+    const token = localStorage.getItem('token');
+    if (token) {
+      handleTokenCheck(token);
     }
-  }, [loggedIn, navigate]);
+  }, [navigate]);
 
   const handleRegistration = (email, password) => {
     auth.register(email, password)
@@ -131,9 +114,9 @@ function App() {
     .then((res) => {
       if (res.statusCode === 401) throw new Error('Ошибка авторизации');
       if (res) {
-        localStorage.setItem('jwt', res.token); // сервер возвращает token, поэтому res.jwt = undefined, а res.token = токену
-        setUserEmail(res.email); // сохраняем данные пользователя, чтобы не вводить их повторно
-        // localStorage.setItem('userPassword', password);
+        localStorage.setItem('token', res.token); // сервер возвращает token, поэтому res.token = undefined, а res.token = токену
+        localStorage.setItem('userName', email); // сохраняем данные пользователя, чтобы не вводить их повторно
+        localStorage.setItem('userPassword', password);
         setLoggedIn(true);
         navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
       }
@@ -144,10 +127,10 @@ function App() {
       setIsSucceeded(false);
     })
   }
-  // P.S. localStorage.jwt = res.token
+  // P.S. localStorage.token = res.token
 
   const handleLogOut = () => {
-    localStorage.removeItem('jwt'); // удаляем токен при выходе из аккаунта
+    localStorage.removeItem('token'); // удаляем токен при выходе из аккаунта
     setLoggedIn(false);
     setUserEmail(''); // очищаем e-mail
     navigate('/sign-in', {replace: true});

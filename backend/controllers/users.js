@@ -54,7 +54,7 @@ module.exports.login = (req, res, next) => {
       //   sameSite: true,
       //   secure: true,
       // });
-      return res.send({ token });
+      // return res.send({ token });
     })
     .catch(next);
 };
@@ -118,27 +118,3 @@ module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
   updateUser(req, res, { avatar });
 };
-
-// старые методы поиска пользователя по ID
-// module.exports.getUserById = (req, res, next) => {
-//   User.findById(req.params.userId)
-//   // orFail заменяет if-проверку в блоке then и не возвращает null, если объект не найден
-//     .orFail(new NotFoundError('Пользователь по указанному _id не найден'))
-//     .then((user) => res.status(Statuses.OK_REQUEST).send(user))
-//     .catch((error) => {
-//       if (error instanceof CastError) {
-//         next(new BadRequestError('Передан невалидный id'));
-//       } else {
-//         next(error);
-//       }
-//     });
-// };
-// module.exports.getCurrentUserInfo = (req, res, next) => {
-//   // находим пользователя по его _id
-//   User.findById(req.user._id)
-//     .orFail(new NotFoundError('Пользователь с указанным _id не найден'))
-//     .then((user) => res.status(Statuses.OK_REQUEST).send(user))
-//     .catch((error) => {
-//       next(error); // ошибки CastError в этом контроллере быть не может:
-//     }); // благодаря аутентификации можно гарантировать, что ID пользователя валидный.
-// };

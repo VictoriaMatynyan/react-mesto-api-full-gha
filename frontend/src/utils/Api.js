@@ -19,7 +19,8 @@ class Api {
     //     .then(this._validateResponse.bind(this));
     // }
     _dataHeaders = () => {
-        this.token = localStorage.getItem('jwt');
+        // берём токен из локального хранилища каждый раз при новом запросе
+        this.token = localStorage.getItem('token'); //jwt
         this.headers.authorization = `Bearer ${this.token}`;
         return this.headers;
     } 
@@ -128,12 +129,13 @@ class Api {
 //создаём экземпляр класса Api с входными данными
 const api = new Api({
     // здесь тоже обновляем адрес api
+    // baseUrl: 'http://127.0.0.1:3000',
     baseUrl: 'https://api.mestoproject.nomoredomainsrocks.ru',
     headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
 }, 
-    credentials: 'include',
+    // credentials: 'include',
 
 });
 

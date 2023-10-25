@@ -1,6 +1,6 @@
 // обновляем адрес api
-// export const BASE_URL = 'http://127.0.0.1:3000';
-export const BASE_URL = 'https://api.mestoproject.nomoredomainsrocks.ru';
+export const BASE_URL = 'http://127.0.0.1:3000';
+// export const BASE_URL = 'https://api.mestoproject.nomoredomainsrocks.ru';
 
 // проверяем корректность запроса на сервер
 export function validateResponse(res) {

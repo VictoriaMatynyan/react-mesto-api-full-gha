@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 // импорт объекта контекста для изменения карточек исходя из данных пользователя
 import CurrentUserContext from '../contexts/CurrentUserContext.jsx';
@@ -21,7 +22,7 @@ const Card = ({ card, onCardClick, onCardDelete, onCardLike, cardToBeDeleted }) 
     // обработчик для отображения popupWithImage
     function handleClick () {
         onCardClick(card);
-    };
+    }
 
     const handleLikeClick = () => {
         onCardLike(card);

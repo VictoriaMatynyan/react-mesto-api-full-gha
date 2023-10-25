@@ -67,44 +67,17 @@ class Api {
         .then(this._validateResponse.bind(this));
     }
 
-    likeCard(cardItem) {
-        return fetch(`${this.baseUrl}/cards/${cardItem._id}/likes`, {
-            method: 'PUT',
+    changeLikeCardStatus(cardId, isLiked) {
+        return fetch(`${this.baseUrl}/cards/${cardId}/likes`, {
+            method: isLiked ? 'PUT' : 'DELETE',
             headers: this._dataHeaders(),
             // credentials: this.credentials
         })
         .then(this._validateResponse.bind(this));
     }
-
-    dislikeCard(cardItem) {
-        return fetch(`${this.baseUrl}/cards/${cardItem._id}/likes`, {
-            method: 'DELETE',
-            headers: this._dataHeaders(),
-            // credentials: this.credentials
-        })
-        .then(this._validateResponse.bind(this));
-    }
-
-    changeLikeCardStatus(cardItem, isLiked) {
-        if(isLiked) {
-            return fetch(`${this.baseUrl}/cards/${cardItem._id}/likes`, {
-                method: 'PUT',
-                headers: this._dataHeaders(),
-                // credentials: this.credentials
-            })
-            .then(this._validateResponse.bind(this));
-        } else {
-            return fetch(`${this.baseUrl}/cards/${cardItem._id}/likes`, {
-            method: 'DELETE',
-            headers: this._dataHeaders(),
-            // credentials: this.credentials
-        })
-        .then(this._validateResponse.bind(this));
-        }  
-    }
-
-    removeCard(cardItem) {
-        return fetch(`${this.baseUrl}/cards/${cardItem._id}`, {
+    
+    removeCard(cardId) {
+        return fetch(`${this.baseUrl}/cards/${cardId}`, {
             method: 'DELETE',
             headers: this._dataHeaders(),
             // credentials: this.credentials
@@ -129,14 +102,31 @@ class Api {
 //создаём экземпляр класса Api с входными данными
 const api = new Api({
     // здесь тоже обновляем адрес api
-    // baseUrl: 'http://127.0.0.1:3000',
-    baseUrl: 'https://api.mestoproject.nomoredomainsrocks.ru',
+    baseUrl: 'http://127.0.0.1:3000',
+    // baseUrl: 'https://api.mestoproject.nomoredomainsrocks.ru',
     headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-}, 
+    }, 
     // credentials: 'include',
-
 });
 
 export default api;
+
+    // changeLikeCardStatus(cardItem, isLiked) {
+    //     if(isLiked) {
+    //         return fetch(`${this.baseUrl}/cards/${cardItem}/likes`, {
+    //             method: 'PUT',
+    //             headers: this._dataHeaders(),
+    //             // credentials: this.credentials
+    //         })
+    //         .then(this._validateResponse.bind(this));
+    //     } else {
+    //         return fetch(`${this.baseUrl}/cards/${cardItem}/likes`, {
+    //         method: 'DELETE',
+    //         headers: this._dataHeaders(),
+    //         // credentials: this.credentials
+    //     })
+    //     .then(this._validateResponse.bind(this));
+    //     }  
+    // }

@@ -10,7 +10,7 @@ const Statuses = require('../utils/statusCodes');
 module.exports.getCards = (req, res, next) => {
   Card.find({})
     .populate(['owner', 'likes'])
-    .then((cards) => res.send(cards))
+    .then((cards) => res.send(cards.reverse())) // меняем порядок карточек: сначала новые
     .catch(next);
 };
 
@@ -18,6 +18,8 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
+    // насыщаем поле owner полной информацией о владельце карточки
+    .then((card) => card.populate('owner'))
     .then((card) => res.status(Statuses.CREATED).send(card))
     .catch((error) => {
       if (error instanceof ValidationError) {
@@ -30,6 +32,7 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
+  // используем метод findById для поиска карточки в БД
   Card.findById(cardId).orFail(new NotFoundError('Передан несуществующий _id карточки'))
     .then((card) => {
       if (card.owner.toString() !== req.user._id) {
@@ -55,6 +58,7 @@ const toggleCardLikes = (req, res, likesData, next) => {
     likesData,
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .orFail(new NotFoundError('Передан несуществующий _id карточки'))
     .then((card) => res.status(Statuses.OK_REQUEST).send(card))
     .catch((error) => {

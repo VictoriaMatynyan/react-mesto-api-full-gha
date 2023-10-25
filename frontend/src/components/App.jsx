@@ -158,12 +158,12 @@ function App() {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
 
     // отправляем запрос в API и получаем обновлённые данные карточки
-    api.changeLikeCardStatus(card, !isLiked)
+    api.changeLikeCardStatus(card._id, !isLiked)
     .then((newCard) => {
         setCards((currentState) => currentState.map((cardElement) => cardElement._id === card._id ? newCard : cardElement));
     })
     .catch((err) => {
-        console.log(`Ошибка при лайке/дислайке элемента:: ${err}`);
+        console.log(`Ошибка при лайке/дислайке элемента: ${err}`);
     })
   }
   // выше, в api, мы принимаем текущее состояние - currentState - и используем map для обновления каждого 
@@ -172,7 +172,7 @@ function App() {
 
   const handleCardDelete = (card) => {
     setIsLoading(true);
-    api.removeCard(card)
+    api.removeCard(card._id)
     .then(() => {
       // делаем неравными id карточки (возвращаем false), чтобы реализовать её удаление
       setCards((currentState) => currentState.filter((cardElement) => cardElement._id !== card._id));
@@ -181,7 +181,10 @@ function App() {
     .catch((err) => {
       console.log(`Ошибка при удалении элемента: ${err}`)
     })
-    .finally(() => setIsLoading(false))
+    .finally(() => {
+      setIsLoading(false);
+      closeAllPopups();
+    })
   }
 
   const handleUpdateUser = ({name, about}) => {
@@ -221,7 +224,10 @@ function App() {
     .catch((err) => {
       console.log(`Ошибка при добавлении новой карточки: ${err}`);
     })
-    .finally(() => setIsLoading(false))
+    .finally(() => {
+      setIsLoading(false)
+      closeAllPopups();
+    })
   }
 
   // функция закрытия всех попапов

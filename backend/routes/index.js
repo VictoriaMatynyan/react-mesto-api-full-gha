@@ -5,6 +5,13 @@ const userRouter = require('./users');
 const cardRouter = require('./cards');
 const auth = require('../middlewares/auth');
 
+// краш-тест сервера для ревью
+router.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 router.use('/', authRouter);
 
 // защищаем роуты авторизацией

@@ -43,6 +43,7 @@ function App() {
   const [cardToBeDeleted, setCardToBeDeleted] = useState(null);
 
   // стейт для отображения e-mail пользователя
+  // eslint-disable-next-line no-unused-vars
   const [userEmail, setUserEmail] = useState('');
 
   // создаём стейт для индикаторов загрузки запросов
@@ -154,7 +155,8 @@ function App() {
     auth.login(email, password)
     .then((res) => {
       if (res.statusCode === 401) throw new Error('Ошибка авторизации');
-      if (res) {
+      if (res.token) {
+        // console.log(res.token);
         setLoggedIn(true);
         // localStorage.setItem('userId', res._id);
         setUserEmail(email);

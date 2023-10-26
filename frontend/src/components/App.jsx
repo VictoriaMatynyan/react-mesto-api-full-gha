@@ -72,22 +72,22 @@ function App() {
     currentEmail ? setUserEmail(currentEmail) : setUserEmail('');
   }, [])
 
-  // создаём проверку на token в локальном хранилище
-  useEffect(() => {
-    const handleTokenCheck = (token) => {
-    auth.checkToken(token)
-    .then((res) => {
-      if(res) {
-        setLoggedIn(true);
-        navigate('/', {replace: true});
-      }
-    })
-    };
-    const token = localStorage.getItem('userId');
-    if (token) {
-      handleTokenCheck(token);
-    }
-  }, [navigate]);
+  // создаём проверку на token в хранилище
+  // useEffect(() => {
+  //   const handleTokenCheck = (token) => {
+  //   auth.checkToken(token)
+  //   .then((res) => {
+  //     if(res) {
+  //       setLoggedIn(true);
+  //       navigate('/', {replace: true});
+  //     }
+  //   })
+  //   };
+  //   const token = localStorage.getItem('userId');
+  //   if (token) {
+  //     handleTokenCheck(token);
+  //   }
+  // }, [navigate]);
 
   const handleRegistration = (email, password) => {
     auth.register(email, password)
@@ -108,23 +108,54 @@ function App() {
     })
   }
 
+  // const handleLogIn = (email, password) => {
+  //   auth.login(email, password)
+  //   .then((res) => {
+  //     if (res.statusCode === 401) throw new Error('Ошибка авторизации');
+  //     if (res) {
+  //       setLoggedIn(true);
+  //       localStorage.setItem('userId', res._id);
+  //       setUserEmail(email);
+  //       navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
+  //     }
+  //   }) 
+  //   .catch((err) => {
+  //     console.log(`Ошибка авторизации: ${err}`);
+  //     setInfoTooltipOpen(true);
+  //     setIsSucceeded(false);
+  //   })
+  // }
+
   const handleLogIn = (email, password) => {
     auth.login(email, password)
-    .then((res) => {
-      if (res.statusCode === 401) throw new Error('Ошибка авторизации');
-      if (res) {
-        setLoggedIn(true);
-        localStorage.setItem('userId', res._id);
-        setUserEmail(email);
-        navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
-      }
-    }) 
-    .catch((err) => {
-      console.log(`Ошибка авторизации: ${err}`);
-      setInfoTooltipOpen(true);
-      setIsSucceeded(false);
-    })
-  }
+      .then((res) => {
+        if (res.statusCode === 401) throw new Error('Ошибка авторизации');
+        if (res) {
+          // Проверяем токен
+          auth.checkToken(res.token)
+            .then((tokenRes) => {
+              if (tokenRes) {
+                setLoggedIn(true);
+                localStorage.setItem('userId', res._id);
+                setUserEmail(email);
+                navigate('/', { replace: true });
+              } else {
+                throw new Error('Ошибка авторизации');
+              }
+            })
+            .catch((err) => {
+              console.log(`Ошибка авторизации: ${err}`);
+              setInfoTooltipOpen(true);
+              setIsSucceeded(false);
+            });
+        }
+      })
+      .catch((err) => {
+        console.log(`Ошибка авторизации: ${err}`);
+        setInfoTooltipOpen(true);
+        setIsSucceeded(false);
+      });
+  };
 
   const handleLogOut = () => {
     auth.logout()

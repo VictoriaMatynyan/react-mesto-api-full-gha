@@ -155,13 +155,10 @@ function App() {
     auth.login(email, password)
     .then((res) => {
       if (res.statusCode === 401) throw new Error('Ошибка авторизации');
-      if (res.token) {
-        // console.log(res.token);
-        setLoggedIn(true);
-        // localStorage.setItem('userId', res._id);
-        setUserEmail(email);
-        navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
-      }
+      setLoggedIn(true);
+      // localStorage.setItem('userId', res._id);
+      setUserEmail(email);
+      navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
     }) 
     .catch((err) => {
       console.log(`Ошибка авторизации: ${err}`);

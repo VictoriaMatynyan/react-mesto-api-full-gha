@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import Header from './Header.jsx';
 import Main from './Main.jsx';
@@ -54,34 +54,33 @@ function App() {
   //создаём стейт для проверки пользователя на авторизацию
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const handleTokenCheck = useCallback(() => {
-    // проверяем, авторизован ли пользователь: если есть данные в req.user._id, значит, да
-    const authorizedUser = localStorage.getItem('userId')
-    if (authorizedUser) {
-      // проверяем наличие данных в req.user._id
-      auth.checkToken()
-        .then((userData) => {
-          if (userData.email) {
-            // авторизуем пользователя
-            setLoggedIn(true);
-            setUserEmail(userData.email);
-            navigate('/', { replace: true });
-          }
-        })
-        .catch((err) => {
-          console.log(err); // выведем ошибку в консоль
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else {
-      setIsLoading(false);
-    }
-    }, [navigate]);
+  // const handleTokenCheck = useCallback(() => {
+  //   // проверяем, авторизован ли пользователь: если есть данные в req.user._id, значит, да
+  //   const authorizedUser = localStorage.getItem('userId')
+  //   if (authorizedUser) {
+  //     // проверяем наличие данных в req.user._id
+  //     auth.checkToken()
+  //       .then((userData) => {
+  //         if (userData.email) {
+  //           // авторизуем пользователя
+  //           setLoggedIn(true);
+  //           setUserEmail(userData.email);
+  //           navigate('/', { replace: true });
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         console.log(err); // выведем ошибку в консоль
+  //       })
+  //       .finally(() => {
+  //         setIsLoading(false);
+  //       });
+  //   } else {
+  //     setIsLoading(false);
+  //   }
+  //   }, [navigate]);
 
   // объединяем запросы и получение данных пользователя и карточек в 1 хук
   useEffect(() => {
-    handleTokenCheck();
     if (loggedIn) {
       Promise.all ([api.getUserInfo(), api.getInitialCards()])
       .then(([userData, cardsData]) => {
@@ -90,7 +89,7 @@ function App() {
       })
       .catch(err => console.log(`Ошибка при загрузки данных с сервера: ${err}`));
       }
-  }, [handleTokenCheck, loggedIn]);
+  }, [loggedIn]);
 
   // сохраняем email   
   useEffect(() => {
@@ -134,31 +133,14 @@ function App() {
     })
   }
 
-  const handleLogIn = (email, password) => {
-    auth.login(email, password)
-    .then((res) => {
-      if (res.statusCode === 401) throw new Error('Ошибка авторизации');
-      if (res.token) {
-        setLoggedIn(true);
-        setUserEmail(email);
-        localStorage.setItem('userId', 'true');
-        navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
-      }
-    }) 
-    .catch((err) => {
-      console.log(`Ошибка авторизации: ${err}`);
-      setInfoTooltipOpen(true);
-      setIsSucceeded(false);
-    })
-  }
   // const handleLogIn = (email, password) => {
   //   auth.login(email, password)
   //   .then((res) => {
   //     if (res.statusCode === 401) throw new Error('Ошибка авторизации');
-  //     if (res) {
+  //     if (res.token) {
   //       setLoggedIn(true);
-  //       localStorage.setItem('userId', res._id);
   //       setUserEmail(email);
+  //       localStorage.setItem('userId', 'true');
   //       navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
   //     }
   //   }) 
@@ -168,6 +150,23 @@ function App() {
   //     setIsSucceeded(false);
   //   })
   // }
+  const handleLogIn = (email, password) => {
+    auth.login(email, password)
+    .then((res) => {
+      if (res.statusCode === 401) throw new Error('Ошибка авторизации');
+      if (res) {
+        setLoggedIn(true);
+        // localStorage.setItem('userId', res._id);
+        setUserEmail(email);
+        navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
+      }
+    }) 
+    .catch((err) => {
+      console.log(`Ошибка авторизации: ${err}`);
+      setInfoTooltipOpen(true);
+      setIsSucceeded(false);
+    })
+  }
 
   // const handleLogIn = (email, password) => {
   //   auth.login(email, password)
@@ -203,7 +202,7 @@ function App() {
   const handleLogOut = () => {
     auth.logout()
     .then(() => {
-      localStorage.removeItem('userId');
+      // localStorage.removeItem('userId');
       setLoggedIn(false);
       setUserEmail(''); // очищаем e-mail
       navigate('/sign-in', {replace: true});

@@ -55,8 +55,7 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const handleTokenCheck = useCallback(() => {
-    // если пользователь авторизован,
-    // эта функция проверит, есть ли данные в req.user._id на сервере 
+    // проверяем, авторизован ли пользователь: если есть данные в req.user._id, значит, да
     const authorizedUser = localStorage.getItem('userId')
     if (authorizedUser) {
       // проверяем наличие данных в req.user._id
@@ -142,6 +141,7 @@ function App() {
       if (res.token) {
         setLoggedIn(true);
         setUserEmail(email);
+        localStorage.setItem('userId', 'true');
         navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
       }
     }) 
@@ -203,7 +203,7 @@ function App() {
   const handleLogOut = () => {
     auth.logout()
     .then(() => {
-      // localStorage.removeItem('userId');
+      localStorage.removeItem('userId');
       setLoggedIn(false);
       setUserEmail(''); // очищаем e-mail
       navigate('/sign-in', {replace: true});

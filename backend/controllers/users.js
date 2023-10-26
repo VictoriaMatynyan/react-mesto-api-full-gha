@@ -55,7 +55,7 @@ module.exports.login = (req, res, next) => {
         sameSite: true,
         secure: true,
       });
-      return res.status(Statuses.OK_REQUEST).send({ token }); // user.toJSON()
+      return res.status(Statuses.OK_REQUEST).send(user.toJSON()); // user.toJSON()
     })
     .catch(next);
 };

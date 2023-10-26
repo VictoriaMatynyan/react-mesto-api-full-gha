@@ -18,7 +18,7 @@ export const register = (email, password) => {
             'Content-Type': 'application/json',  // Indicates that the request body format is JSON
         },
         body: JSON.stringify({ email, password }),
-        // credentials: 'include'
+        
     })
     .then(validateResponse)
 }
@@ -26,26 +26,26 @@ export const register = (email, password) => {
 export const login = (email, password) => {
     return fetch(`${BASE_URL}/signin`, {
         method: 'POST',
+        // отправляем авторизационные данные
+        credentials: 'include',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
-        // credentials: 'include'
     })
-    .then(validateResponse)
+    .then(validateResponse);
 }
 
-export const checkToken = (token) => {
+export const checkToken = () => { // token
     return fetch(`${BASE_URL}/users/me`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
         },
-        // credentials: 'include'
     })
     .then(validateResponse)
-    // .then((res) => res.json())
 }

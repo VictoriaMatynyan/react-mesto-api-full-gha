@@ -2,7 +2,6 @@ class Api {
     constructor(options) {
         this.baseUrl = options.baseUrl;
         this.headers = options.headers;
-        // this.credentials = options.credentials;
     }
     
     //проверка ответа сервера на корректность
@@ -15,22 +14,21 @@ class Api {
 
     // создаём запрос на сервер
     // _makeRequest(url, params) {
-    //     return fetch(url, params)
+    //     return fetch(`${this.baseUrl}${url}`, params)
     //     .then(this._validateResponse.bind(this));
     // }
-    _dataHeaders = () => {
-        // берём токен из локального хранилища каждый раз при новом запросе
-        this.token = localStorage.getItem('token'); //jwt
-        this.headers.authorization = `Bearer ${this.token}`;
-        return this.headers;
-    } 
+    // _dataHeaders = () => {
+    //     // берём токен из локального хранилища каждый раз при новом запросе
+    //     this.token = localStorage.getItem('token'); //jwt
+    //     this.headers.authorization = `Bearer ${this.token}`;
+    //     return this.headers;
+    // } 
 
     getInitialCards() {
         //возвращаем объект Promise через return fetch
         return fetch(`${this.baseUrl}/cards`, {
             method: 'GET',
-            headers: this._dataHeaders(),
-            // credentials: this.credentials
+            credentials: 'include',
         })
         .then(this._validateResponse.bind(this));
     }
@@ -38,8 +36,7 @@ class Api {
     getUserInfo() {
         return fetch(`${this.baseUrl}/users/me`, {
             method: 'GET',
-            headers: this._dataHeaders(),
-            // credentials: this.credentials
+            credentials: 'include',
         })
         .then(this._validateResponse.bind(this)); //явно указываем значение this, иначе теряется контекст
     }
@@ -47,12 +44,15 @@ class Api {
     editUserInfo(formValues) {
         return fetch(`${this.baseUrl}/users/me`, {
             method: 'PATCH',
-            headers: this._dataHeaders(),
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
             body: JSON.stringify({
                 name: formValues.name,
                 about: formValues.about
             }),
-            // credentials: this.credentials
         })
         .then(this._validateResponse.bind(this));
     }
@@ -60,9 +60,13 @@ class Api {
     editAvatar(avatar) {
         return fetch(`${this.baseUrl}/users/me/avatar`, {
             method: 'PATCH',
-            headers: this._dataHeaders(),
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
             body: JSON.stringify(avatar),
-            // credentials: this.credentials
+            
         })
         .then(this._validateResponse.bind(this));
     }
@@ -70,8 +74,11 @@ class Api {
     changeLikeCardStatus(cardId, isLiked) {
         return fetch(`${this.baseUrl}/cards/${cardId}/likes`, {
             method: isLiked ? 'PUT' : 'DELETE',
-            headers: this._dataHeaders(),
-            // credentials: this.credentials
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
         })
         .then(this._validateResponse.bind(this));
     }
@@ -79,8 +86,7 @@ class Api {
     removeCard(cardId) {
         return fetch(`${this.baseUrl}/cards/${cardId}`, {
             method: 'DELETE',
-            headers: this._dataHeaders(),
-            // credentials: this.credentials
+            credentials: 'include',
         })
         .then(this._validateResponse.bind(this));
     }
@@ -88,7 +94,11 @@ class Api {
     addNewCard(data) {
         return fetch(`${this.baseUrl}/cards`, {
             method: 'POST',
-            headers: this._dataHeaders(),
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
             body: JSON.stringify({
                 name: data.name,
                 link: data.link
@@ -104,11 +114,12 @@ const api = new Api({
     // здесь тоже обновляем адрес api
     baseUrl: 'http://127.0.0.1:3000',
     // baseUrl: 'https://api.mestoproject.nomoredomainsrocks.ru',
+    credentials: 'include',
     headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     }, 
-    // credentials: 'include',
+    
 });
 
 export default api;
@@ -117,14 +128,14 @@ export default api;
     //     if(isLiked) {
     //         return fetch(`${this.baseUrl}/cards/${cardItem}/likes`, {
     //             method: 'PUT',
-    //             headers: this._dataHeaders(),
+    //             headers: this.headers,
     //             // credentials: this.credentials
     //         })
     //         .then(this._validateResponse.bind(this));
     //     } else {
     //         return fetch(`${this.baseUrl}/cards/${cardItem}/likes`, {
     //         method: 'DELETE',
-    //         headers: this._dataHeaders(),
+    //         headers: this.headers,
     //         // credentials: this.credentials
     //     })
     //     .then(this._validateResponse.bind(this));

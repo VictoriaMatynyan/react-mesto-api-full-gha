@@ -46,15 +46,16 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = generateToken({ _id: user._id });
       // передаём токен в заголовке
-      res.status(Statuses.OK_REQUEST).send({ token });
+      // res.status(Statuses.OK_REQUEST).send({ token });
       // сохраняем токен в куках
-      // res.cookie('jwt', token, {
-      //   maxAge: 3600000,
-      //   httpOnly: true,
-      //   sameSite: true,
-      //   secure: true,
-      // });
-      // return res.send({ token });
+      res.cookie('jwt', token, {
+        maxAge: 3600000,
+        httpOnly: true,
+        // sameSite: 'none' при локальной сборке, т.к. на Vite адрес порт 5173, а не 3000!
+        sameSite: 'none',
+        secure: true,
+      });
+      return res.status(Statuses.OK_REQUEST).send(user.toJSON());
     })
     .catch(next);
 };

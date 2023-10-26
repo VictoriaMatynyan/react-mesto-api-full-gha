@@ -84,11 +84,53 @@ function App() {
       }
     })
     };
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('userId');
     if (token) {
       handleTokenCheck(token);
     }
   }, [navigate]);
+
+  //   const tokenCheck = useCallback(() => {
+  //   // если пользователь авторизован,
+  //   // проверяем, есть ли данные в req.user._id на сервере 
+  //   const token = localStorage.getItem('userId')
+  //   if (token) {
+  //     // проверим, есть ли данные в req.user._id
+  //     auth
+  //       .checkToken()
+  //       .then((userData) => { // res
+  //         if (userData.email) {
+  //           // авторизуем пользователя
+  //           setLoggedIn(true);
+  //           setUserEmail(userData.email);
+  //           navigate('/', { replace: true });
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         console.log(err); // выведем ошибку в консоль
+  //       })
+  //       .finally(() => {
+  //         setIsLoading(false);
+  //       });
+  //   } else {
+  //     setIsLoading(false);
+  //   }
+  //   }, [navigate]);
+
+  // useEffect(() => {
+  //   tokenCheck();
+  //   if (loggedIn) {
+  //     Promise.all([api.getUserInfo(), api.getInitialCards()])
+  //       .then(([userData, cardsData]) => {
+  //         setCurrentUser(userData);
+  //         setCards(cardsData);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err); // выведем ошибку в консоль
+  //       });
+  //     }
+  // }, [loggedIn, tokenCheck]);
+
 
   const handleRegistration = (email, password) => {
     auth.register(email, password)
@@ -114,10 +156,11 @@ function App() {
     .then((res) => {
       if (res.statusCode === 401) throw new Error('Ошибка авторизации');
       if (res) {
-        localStorage.setItem('token', res.token); // сервер возвращает token, поэтому res.token = undefined, а res.token = токену
-        localStorage.setItem('userName', email); // сохраняем данные пользователя, чтобы не вводить их повторно
-        localStorage.setItem('userPassword', password);
         setLoggedIn(true);
+        localStorage.setItem('userId', res._id); // 'true'
+        // localStorage.setItem('userName', email); // сохраняем данные пользователя, чтобы не вводить их повторно
+        // localStorage.setItem('userPassword', password);
+        setUserEmail(email);
         navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
       }
     }) 
@@ -128,9 +171,26 @@ function App() {
     })
   }
   // P.S. localStorage.token = res.token
+  // const handleLogIn = (email, password) => {
+  //   auth.login(email, password)
+  //     .then((res) => {
+  //       if (res.statusCode === 401) throw new Error('Ошибка авторизации');
+  //       if (res.message) {
+  //         setLoggedIn(true);
+  //         setUserEmail(email);
+  //         localStorage.setItem('userId', 'true');
+  //         navigate('/', { replace: true });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setIsSucceeded(false);
+  //       setInfoTooltipOpen(true);
+  //     })
+  // };
 
   const handleLogOut = () => {
-    localStorage.removeItem('token'); // удаляем токен при выходе из аккаунта
+    localStorage.removeItem('userId'); // удаляем токен при выходе из аккаунта
     setLoggedIn(false);
     setUserEmail(''); // очищаем e-mail
     navigate('/sign-in', {replace: true});

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import Header from './Header.jsx';
 import Main from './Main.jsx';
@@ -43,7 +43,6 @@ function App() {
   const [cardToBeDeleted, setCardToBeDeleted] = useState(null);
 
   // стейт для отображения e-mail пользователя
-  // eslint-disable-next-line no-unused-vars
   const [userEmail, setUserEmail] = useState('');
 
   // создаём стейт для индикаторов загрузки запросов
@@ -56,16 +55,16 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   // объединяем запросы и получение данных пользователя и карточек в 1 хук
-  // useEffect(() => {
-  //   if (loggedIn) {
-  //     Promise.all ([api.getUserInfo(), api.getInitialCards()])
-  //     .then(([userData, cardsData]) => {
-  //       setCurrentUser(userData);
-  //       setCards(cardsData);
-  //     })
-  //     .catch(err => console.log(`Ошибка при загрузки данных с сервера: ${err}`));
-  //     }
-  // }, [loggedIn]);
+  useEffect(() => {
+    if (loggedIn) {
+      Promise.all ([api.getUserInfo(), api.getInitialCards()])
+      .then(([userData, cardsData]) => {
+        setCurrentUser(userData);
+        setCards(cardsData);
+      })
+      .catch(err => console.log(`Ошибка при загрузки данных с сервера: ${err}`));
+      }
+  }, [loggedIn]);
 
   // сохраняем email   
   useEffect(() => {
@@ -74,63 +73,21 @@ function App() {
   }, [])
 
   // создаём проверку на token в локальном хранилище
-  // useEffect(() => {
-  //   const handleTokenCheck = (token) => {
-  //   auth.checkToken(token)
-  //   .then((res) => {
-  //     if(res) {
-  //       setLoggedIn(true);
-  //       navigate('/', {replace: true});
-  //     }
-  //   })
-  //   };
-  //   const token = localStorage.getItem('userId');
-  //   if (token) {
-  //     handleTokenCheck(token);
-  //   }
-  // }, [navigate]);
-
-    const tokenCheck = useCallback(() => {
-    // если пользователь авторизован,
-    // проверяем, есть ли данные в req.user._id на сервере 
-    const token = localStorage.getItem('userId')
-    if (token) {
-      // проверим, есть ли данные в req.user._id
-      auth
-        .checkToken()
-        .then((userData) => { // res
-          if (userData.email) {
-            // авторизуем пользователя
-            setLoggedIn(true);
-            setUserEmail(userData.email);
-            navigate('/', { replace: true });
-          }
-        })
-        .catch((err) => {
-          console.log(err); // выведем ошибку в консоль
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else {
-      setIsLoading(false);
-    }
-    }, [navigate]);
-
   useEffect(() => {
-    tokenCheck();
-    if (loggedIn) {
-      Promise.all([api.getUserInfo(), api.getInitialCards()])
-        .then(([userData, cardsData]) => {
-          setCurrentUser(userData);
-          setCards(cardsData);
-        })
-        .catch((err) => {
-          console.log(err); // выведем ошибку в консоль
-        });
+    const handleTokenCheck = (token) => {
+    auth.checkToken(token)
+    .then((res) => {
+      if(res) {
+        setLoggedIn(true);
+        navigate('/', {replace: true});
       }
-  }, [loggedIn, tokenCheck]);
-
+    })
+    };
+    const token = localStorage.getItem('userId');
+    if (token) {
+      handleTokenCheck(token);
+    }
+  }, [navigate]);
 
   const handleRegistration = (email, password) => {
     auth.register(email, password)
@@ -157,9 +114,7 @@ function App() {
       if (res.statusCode === 401) throw new Error('Ошибка авторизации');
       if (res) {
         setLoggedIn(true);
-        localStorage.setItem('userId', res._id); // 'true'
-        // localStorage.setItem('userName', email); // сохраняем данные пользователя, чтобы не вводить их повторно
-        // localStorage.setItem('userPassword', password);
+        localStorage.setItem('userId', res._id);
         setUserEmail(email);
         navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
       }
@@ -170,29 +125,11 @@ function App() {
       setIsSucceeded(false);
     })
   }
-  // P.S. localStorage.token = res.token
-  // const handleLogIn = (email, password) => {
-  //   auth.login(email, password)
-  //     .then((res) => {
-  //       if (res.statusCode === 401) throw new Error('Ошибка авторизации');
-  //       if (res.message) {
-  //         setLoggedIn(true);
-  //         setUserEmail(email);
-  //         localStorage.setItem('userId', 'true');
-  //         navigate('/', { replace: true });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       setIsSucceeded(false);
-  //       setInfoTooltipOpen(true);
-  //     })
-  // };
 
   const handleLogOut = () => {
     auth.logout()
     .then(() => {
-      localStorage.removeItem('userId'); // удаляем токен при выходе из аккаунта
+      localStorage.removeItem('userId');
       setLoggedIn(false);
       setUserEmail(''); // очищаем e-mail
       navigate('/sign-in', {replace: true});
@@ -393,5 +330,3 @@ function App() {
 }
 
 export default App;
-
-// Routes - аналог компонента Switch в React Router 5

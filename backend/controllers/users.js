@@ -61,6 +61,7 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.logout = (req, res) => {
+  // очищаем токен при выходе из аккаунта
   res.clearCookie('jwt').send({ message: 'Выход из системы выполнен успешно' });
 };
 

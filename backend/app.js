@@ -14,7 +14,8 @@ const { PORT = 3000, MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process
 
 const app = express();
 
-// app.use(cors());
+// app.use(cors()); - этого достаточно, если токен храниться в headers
+// подключаем обработчик CORS политики как мидлвару
 app.use(cors);
 
 app.use(express.json()); // вместо body parser

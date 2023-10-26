@@ -10,24 +10,13 @@ class Api {
             return res.json();
         } //в случае ошибки - отклоняем промис
         return Promise.reject(`Ошибка получения ответа от сервера: ${res.status}`)
-    }
-
-    // создаём запрос на сервер
-    // _makeRequest(url, params) {
-    //     return fetch(`${this.baseUrl}${url}`, params)
-    //     .then(this._validateResponse.bind(this));
-    // }
-    // _dataHeaders = () => {
-    //     // берём токен из локального хранилища каждый раз при новом запросе
-    //     this.token = localStorage.getItem('token'); //jwt
-    //     this.headers.authorization = `Bearer ${this.token}`;
-    //     return this.headers;
-    // } 
+    } 
 
     getInitialCards() {
         //возвращаем объект Promise через return fetch
         return fetch(`${this.baseUrl}/cards`, {
             method: 'GET',
+            // отправляем авторизационные данные
             credentials: 'include',
         })
         .then(this._validateResponse.bind(this));
@@ -103,7 +92,6 @@ class Api {
                 name: data.name,
                 link: data.link
             }),
-            // credentials: this.credentials
         })
         .then(this._validateResponse.bind(this));
     }
@@ -118,26 +106,9 @@ const api = new Api({
     headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
+
     }, 
     
 });
 
 export default api;
-
-    // changeLikeCardStatus(cardItem, isLiked) {
-    //     if(isLiked) {
-    //         return fetch(`${this.baseUrl}/cards/${cardItem}/likes`, {
-    //             method: 'PUT',
-    //             headers: this.headers,
-    //             // credentials: this.credentials
-    //         })
-    //         .then(this._validateResponse.bind(this));
-    //     } else {
-    //         return fetch(`${this.baseUrl}/cards/${cardItem}/likes`, {
-    //         method: 'DELETE',
-    //         headers: this.headers,
-    //         // credentials: this.credentials
-    //     })
-    //     .then(this._validateResponse.bind(this));
-    //     }  
-    // }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import Header from './Header.jsx';
 import Main from './Main.jsx';
@@ -56,16 +56,16 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   // объединяем запросы и получение данных пользователя и карточек в 1 хук
-  useEffect(() => {
-    if (loggedIn) {
-      Promise.all ([api.getUserInfo(), api.getInitialCards()])
-      .then(([userData, cardsData]) => {
-        setCurrentUser(userData);
-        setCards(cardsData);
-      })
-      .catch(err => console.log(`Ошибка при загрузки данных с сервера: ${err}`));
-      }
-  }, [loggedIn]);
+  // useEffect(() => {
+  //   if (loggedIn) {
+  //     Promise.all ([api.getUserInfo(), api.getInitialCards()])
+  //     .then(([userData, cardsData]) => {
+  //       setCurrentUser(userData);
+  //       setCards(cardsData);
+  //     })
+  //     .catch(err => console.log(`Ошибка при загрузки данных с сервера: ${err}`));
+  //     }
+  // }, [loggedIn]);
 
   // сохраняем email   
   useEffect(() => {
@@ -74,62 +74,62 @@ function App() {
   }, [])
 
   // создаём проверку на token в локальном хранилище
-  useEffect(() => {
-    const handleTokenCheck = (token) => {
-    auth.checkToken(token)
-    .then((res) => {
-      if(res) {
-        setLoggedIn(true);
-        navigate('/', {replace: true});
-      }
-    })
-    };
-    const token = localStorage.getItem('userId');
-    if (token) {
-      handleTokenCheck(token);
-    }
-  }, [navigate]);
-
-  //   const tokenCheck = useCallback(() => {
-  //   // если пользователь авторизован,
-  //   // проверяем, есть ли данные в req.user._id на сервере 
-  //   const token = localStorage.getItem('userId')
-  //   if (token) {
-  //     // проверим, есть ли данные в req.user._id
-  //     auth
-  //       .checkToken()
-  //       .then((userData) => { // res
-  //         if (userData.email) {
-  //           // авторизуем пользователя
-  //           setLoggedIn(true);
-  //           setUserEmail(userData.email);
-  //           navigate('/', { replace: true });
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.log(err); // выведем ошибку в консоль
-  //       })
-  //       .finally(() => {
-  //         setIsLoading(false);
-  //       });
-  //   } else {
-  //     setIsLoading(false);
-  //   }
-  //   }, [navigate]);
-
   // useEffect(() => {
-  //   tokenCheck();
-  //   if (loggedIn) {
-  //     Promise.all([api.getUserInfo(), api.getInitialCards()])
-  //       .then(([userData, cardsData]) => {
-  //         setCurrentUser(userData);
-  //         setCards(cardsData);
-  //       })
-  //       .catch((err) => {
-  //         console.log(err); // выведем ошибку в консоль
-  //       });
+  //   const handleTokenCheck = (token) => {
+  //   auth.checkToken(token)
+  //   .then((res) => {
+  //     if(res) {
+  //       setLoggedIn(true);
+  //       navigate('/', {replace: true});
   //     }
-  // }, [loggedIn, tokenCheck]);
+  //   })
+  //   };
+  //   const token = localStorage.getItem('userId');
+  //   if (token) {
+  //     handleTokenCheck(token);
+  //   }
+  // }, [navigate]);
+
+    const tokenCheck = useCallback(() => {
+    // если пользователь авторизован,
+    // проверяем, есть ли данные в req.user._id на сервере 
+    const token = localStorage.getItem('userId')
+    if (token) {
+      // проверим, есть ли данные в req.user._id
+      auth
+        .checkToken()
+        .then((userData) => { // res
+          if (userData.email) {
+            // авторизуем пользователя
+            setLoggedIn(true);
+            setUserEmail(userData.email);
+            navigate('/', { replace: true });
+          }
+        })
+        .catch((err) => {
+          console.log(err); // выведем ошибку в консоль
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
+    }
+    }, [navigate]);
+
+  useEffect(() => {
+    tokenCheck();
+    if (loggedIn) {
+      Promise.all([api.getUserInfo(), api.getInitialCards()])
+        .then(([userData, cardsData]) => {
+          setCurrentUser(userData);
+          setCards(cardsData);
+        })
+        .catch((err) => {
+          console.log(err); // выведем ошибку в консоль
+        });
+      }
+  }, [loggedIn, tokenCheck]);
 
 
   const handleRegistration = (email, password) => {
@@ -190,10 +190,16 @@ function App() {
   // };
 
   const handleLogOut = () => {
-    localStorage.removeItem('userId'); // удаляем токен при выходе из аккаунта
-    setLoggedIn(false);
-    setUserEmail(''); // очищаем e-mail
-    navigate('/sign-in', {replace: true});
+    auth.logout()
+    .then(() => {
+      localStorage.removeItem('userId'); // удаляем токен при выходе из аккаунта
+      setLoggedIn(false);
+      setUserEmail(''); // очищаем e-mail
+      navigate('/sign-in', {replace: true});
+    })
+    .catch((err) => {
+      console.log(`Ошибка при выходе из системы: ${err}`);
+    })
   }
 
   // создаём обработчики для открытия попапов

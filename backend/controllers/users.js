@@ -51,13 +51,17 @@ module.exports.login = (req, res, next) => {
       res.cookie('jwt', token, {
         maxAge: 3600000,
         httpOnly: true,
-        // sameSite: 'none' при локальной сборке, т.к. на Vite адрес порт 5173, а не 3000!
-        sameSite: 'none',
+        // sameSite: 'none' при локальной сборке, т.к. на Vite адрес порта 5173, а не 3000!
+        sameSite: true,
         secure: true,
       });
       return res.status(Statuses.OK_REQUEST).send(user.toJSON());
     })
     .catch(next);
+};
+
+module.exports.logout = (req, res) => {
+  res.clearCookie('jwt').send({ message: 'Выход из системы выполнен успешно' });
 };
 
 module.exports.getUsers = (req, res, next) => {

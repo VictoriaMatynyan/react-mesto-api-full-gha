@@ -112,8 +112,8 @@ class Api {
 //создаём экземпляр класса Api с входными данными
 const api = new Api({
     // здесь тоже обновляем адрес api
-    baseUrl: 'http://127.0.0.1:3000',
-    // baseUrl: 'https://api.mestoproject.nomoredomainsrocks.ru',
+    // baseUrl: 'http://127.0.0.1:3000',
+    baseUrl: 'https://api.mestoproject.nomoredomainsrocks.ru',
     credentials: 'include',
     headers: {
     'Content-Type': 'application/json',

@@ -47,7 +47,7 @@ export const logout = () => {
         "Content-Type": "application/json",
       },
       })
-      .then((validateResponse));
+      .then(validateResponse);
   }
 
 export const checkToken = () => { // token

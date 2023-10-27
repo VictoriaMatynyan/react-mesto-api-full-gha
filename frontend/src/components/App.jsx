@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import Header from './Header.jsx';
 import Main from './Main.jsx';
@@ -55,44 +55,17 @@ function App() {
   //создаём стейт для проверки пользователя на авторизацию
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const tokenCheck = useCallback(() => {
-    // если пользователь авторизован,
-    // эта функция проверит, есть ли данные в req.user._id на сервере 
-    const userId = localStorage.getItem('userId')
-    if (userId) {
-      // проверим, есть ли данные в req.user._id
-      auth.checkToken()
-        .then((userData) => {
-          if (userData.email) {
-            // авторизуем пользователя
-            setLoggedIn(true);
-            setUserEmail(userData.email);
-            navigate('/', { replace: true });
-          }
-        })
-        .catch((err) => {
-          console.log(err); // выведем ошибку в консоль
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else {
-      setIsLoading(false);
-    }
-    }, [navigate]); 
-
     useEffect(() => {
-    tokenCheck();
     loggedIn &&
       Promise.all([api.getUserInfo(), api.getInitialCards()])
         .then(([userData, cardsData]) => {
           setCurrentUser(userData);
-          setCards(cardsData.reverse());
+          setCards(cardsData);
         })
         .catch((err) => {
-          console.log(err); // выведем ошибку в консоль
+          console.log(`Ошибка хука на выдачу данных: ${err}`); // выведем ошибку в консоль
         });
-  }, [loggedIn, tokenCheck]);
+  }, [loggedIn]);
 
   // объединяем запросы и получение данных пользователя и карточек в 1 хук
   // useEffect(() => {
@@ -107,10 +80,10 @@ function App() {
   // }, [loggedIn]);
 
   // сохраняем email   
-  useEffect(() => {
-    const currentEmail = localStorage.getItem('userName');
-    currentEmail ? setUserEmail(currentEmail) : setUserEmail('');
-  }, [])
+  // useEffect(() => {
+  //   const currentEmail = localStorage.getItem('userName');
+  //   currentEmail ? setUserEmail(currentEmail) : setUserEmail('');
+  // }, [])
 
   // создаём проверку на token в хранилище
   // useEffect(() => {
@@ -148,17 +121,17 @@ function App() {
     })
   }
 
-  const handleLogIn = (values) => {
+  const handleLogIn = (email, password) => {
     setIsLoading(true);
-    if (!values.email || !values.password) {
+    if (!email || !password) {
       return;
     }
-    auth.login(values.password, values.email)
+    auth.login(email, password)
       .then((data) => {
         if (data.message) {
           setLoggedIn(true);
-          setUserEmail(values.email);
-          localStorage.setItem('authorized', 'true');
+          setUserEmail(email);
+          localStorage.setItem('userId', 'true');
           navigate('/', { replace: true });
         }
       })

@@ -1,68 +1,25 @@
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../errors/unauthorized');
 
-// eslint-disable-next-line no-unused-vars
 const { JWT_SECRET, NODE_ENV } = process.env;
 
-// module.exports = (req, res, next) => {
-//   let payload;
-//   try {
-//     const { cookies } = req;
-//     // достаём авторизационный заголовок, потому что автотесты не пропускают куки
-//     const { authorization } = req.headers;
-
-//     if ((authorization && authorization.startsWith('Bearer ')) || (cookies && cookies.jwt)) {
-//       const token = authorization ? authorization.replace('Bearer ', '') : cookies.jwt;
-//       // верифицируем токен
-//       // явно указываем условие NODE_ENV === 'production' чтобы выбрать правильный секретный ключ
-//       payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'secret-key');
-//       // расширяем объект пользователя - записываем в него payload
-//       req.user = payload;
-//       next();
-//     } else {
-//       next(new UnauthorizedError('Неверные авторизационные данные'));
-//     }
-//   } catch (error) {
-//     next(new UnauthorizedError('Неверные авторизационные данные'));
-//   }
-// };
-
 // авторизация на чистых куках (автотесты не пропускают)
-// module.exports = (req, res, next) => {
-//   let payload;
-//   try {
-//     const { cookies } = req;
-//     if ((cookies && cookies.jwt)) {
-//       const token = cookies.jwt;
-//       payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'secret-key');
-//       req.user = payload;
-//       next();
-//     } else {
-//       next(new UnauthorizedError('Неверные авторизационные данные'));
-//     }
-//   } catch (error) {
-//     next(new UnauthorizedError('Неверные авторизационные данные'));
-//   }
-// };
-
-const auth = (req, res, next) => {
-  if (req.cookies.jwt) {
-    const token = req.cookies.jwt;
-    try {
-      const payload = jwt.verify(token, JWT_SECRET);
+module.exports = (req, res, next) => {
+  let payload;
+  try {
+    const { cookies } = req;
+    if ((cookies && cookies.jwt)) {
+      const token = cookies.jwt;
+      payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'secret-key');
       req.user = payload;
-    } catch (error) {
-      next(new UnauthorizedError('Необходима авторизация'));
-      return;
+      next();
+    } else {
+      next(new UnauthorizedError('Неверные авторизационные данные'));
     }
-  } else {
-    next(new UnauthorizedError('Необходима авторизация'));
-    return;
+  } catch (error) {
+    next(new UnauthorizedError('Неверные авторизационные данные'));
   }
-  next();
 };
-
-module.exports = auth;
 
 // на случай, если нужно будет откатиться на хранение токена в headers:
 // module.exports = (req, res, next) => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import Header from './Header.jsx';
 import Main from './Main.jsx';
@@ -55,42 +55,56 @@ function App() {
   //создаём стейт для проверки пользователя на авторизацию
   const [loggedIn, setLoggedIn] = useState(false);
 
-  // const handleTokenCheck = useCallback(() => {
-  //   // проверяем, авторизован ли пользователь: если есть данные в req.user._id, значит, да
-  //   const authorizedUser = localStorage.getItem('userId')
-  //   if (authorizedUser) {
-  //     // проверяем наличие данных в req.user._id
-  //     auth.checkToken()
-  //       .then((userData) => {
-  //         if (userData.email) {
-  //           // авторизуем пользователя
-  //           setLoggedIn(true);
-  //           setUserEmail(userData.email);
-  //           navigate('/', { replace: true });
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.log(err); // выведем ошибку в консоль
-  //       })
-  //       .finally(() => {
-  //         setIsLoading(false);
-  //       });
-  //   } else {
-  //     setIsLoading(false);
-  //   }
-  //   }, [navigate]);
+  const tokenCheck = useCallback(() => {
+    // если пользователь авторизован,
+    // эта функция проверит, есть ли данные в req.user._id на сервере 
+    const userId = localStorage.getItem('userId')
+    if (userId) {
+      // проверим, есть ли данные в req.user._id
+      auth.checkToken()
+        .then((userData) => {
+          if (userData.email) {
+            // авторизуем пользователя
+            setLoggedIn(true);
+            setUserEmail(userData.email);
+            navigate('/', { replace: true });
+          }
+        })
+        .catch((err) => {
+          console.log(err); // выведем ошибку в консоль
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
+    }
+    }, [navigate]); 
+
+    useEffect(() => {
+    tokenCheck();
+    loggedIn &&
+      Promise.all([api.getUserInfo(), api.getInitialCards()])
+        .then(([userData, cardsData]) => {
+          setCurrentUser(userData);
+          setCards(cardsData.reverse());
+        })
+        .catch((err) => {
+          console.log(err); // выведем ошибку в консоль
+        });
+  }, [loggedIn, tokenCheck]);
 
   // объединяем запросы и получение данных пользователя и карточек в 1 хук
-  useEffect(() => {
-    if (loggedIn) {
-      Promise.all ([api.getUserInfo(), api.getInitialCards()])
-      .then(([userData, cardsData]) => {
-        setCurrentUser(userData);
-        setCards(cardsData);
-      })
-      .catch(err => console.log(`Ошибка при загрузки данных с сервера: ${err}`));
-      }
-  }, [loggedIn]);
+  // useEffect(() => {
+  //   if (loggedIn) {
+  //     Promise.all ([api.getUserInfo(), api.getInitialCards()])
+  //     .then(([userData, cardsData]) => {
+  //       setCurrentUser(userData);
+  //       setCards(cardsData);
+  //     })
+  //     .catch(err => console.log(`Ошибка при загрузки данных с сервера: ${err}`));
+  //     }
+  // }, [loggedIn]);
 
   // сохраняем email   
   useEffect(() => {
@@ -99,21 +113,21 @@ function App() {
   }, [])
 
   // создаём проверку на token в хранилище
-  useEffect(() => {
-    const handleTokenCheck = (token) => {
-    auth.checkToken(token)
-    .then((res) => {
-      if(res) {
-        setLoggedIn(true);
-        navigate('/', {replace: true});
-      }
-    })
-    };
-    const token = localStorage.getItem('userId');
-    if (token) {
-      handleTokenCheck(token);
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   const handleTokenCheck = (token) => {
+  //   auth.checkToken(token)
+  //   .then((res) => {
+  //     if(res) {
+  //       setLoggedIn(true);
+  //       navigate('/', {replace: true});
+  //     }
+  //   })
+  //   };
+  //   const token = localStorage.getItem('userId');
+  //   if (token) {
+  //     handleTokenCheck(token);
+  //   }
+  // }, [navigate]);
 
   const handleRegistration = (email, password) => {
     auth.register(email, password)
@@ -134,23 +148,44 @@ function App() {
     })
   }
 
-  const handleLogIn = (email, password) => {
-    auth.login(email, password)
-    .then((res) => {
-      if (res.statusCode === 401) throw new Error('Ошибка авторизации');
-      if (res) {
-        setLoggedIn(true);
-        setUserEmail(email);
-        localStorage.setItem('userId', 'true');
-        navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
-      }
-    }) 
-    .catch((err) => {
-      console.log(`Ошибка авторизации: ${err}`);
-      setInfoTooltipOpen(true);
-      setIsSucceeded(false);
-    })
-  }
+  const handleLogIn = (values) => {
+    setIsLoading(true);
+    if (!values.email || !values.password) {
+      return;
+    }
+    auth.login(values.password, values.email)
+      .then((data) => {
+        if (data.message) {
+          setLoggedIn(true);
+          setUserEmail(values.email);
+          localStorage.setItem('authorized', 'true');
+          navigate('/', { replace: true });
+        }
+      })
+      .catch((err) => {
+        console.log(`Ошибка авторизации: ${err}`);
+        setInfoTooltipOpen(true);
+        setIsSucceeded(false);
+      })
+  };
+
+  // const handleLogIn = (email, password) => {
+  //   auth.login(email, password)
+  //   .then((res) => {
+  //     if (res.statusCode === 401) throw new Error('Ошибка авторизации');
+  //     if (res) {
+  //       setLoggedIn(true);
+  //       setUserEmail(email);
+  //       localStorage.setItem('userId', 'true');
+  //       navigate('/', {replace: true}); // если успех - переадресовываем пользователя на главную страницу
+  //     }
+  //   }) 
+  //   .catch((err) => {
+  //     console.log(`Ошибка авторизации: ${err}`);
+  //     setInfoTooltipOpen(true);
+  //     setIsSucceeded(false);
+  //   })
+  // }
   // const handleLogIn = (email, password) => {
   //   auth.login(email, password)
   //   .then((res) => {

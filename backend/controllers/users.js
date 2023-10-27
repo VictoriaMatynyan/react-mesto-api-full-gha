@@ -53,7 +53,7 @@ module.exports.login = (req, res, next) => {
         httpOnly: true,
         // sameSite: 'none' при локальной сборке, т.к. на Vite адрес порта 5173, а не 3000!
         sameSite: true,
-        secure: true,
+        // secure: true, // нужен при локальной сборке
       });
       return res.send({ message: 'Авторизация прошла успешно' }); // user.toJSON()
     })

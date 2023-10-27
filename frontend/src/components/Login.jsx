@@ -10,15 +10,6 @@ const Login = ({ handleLogIn }) => {
         handleLogIn(userEmail, userPassword); // передаём актуальные значения полей формы
     }
     
-    // сохраняем последние введённые данные
-    useEffect(() => {
-        const previousEmail = localStorage.getItem('userName');
-        const previousPassword = localStorage.getItem('userPassword');
-
-        previousEmail ? setUserEmail(previousEmail) : setUserEmail('');
-        previousPassword ? setUserPassword(previousPassword) : setUserPassword('');
-    }, []);
-
     return (
         <form
             className="authentication-form"
@@ -57,20 +48,12 @@ const Login = ({ handleLogIn }) => {
 
 export default Login;
 
-// для себя: в теории в calorie-zen компонент Login был расширен так, возможно, 
-// этот компонент так же изменю в дальнейшем 
-{/* <div className="login__signup">
-        <p>Ещё не зарегистрированы?</p>
-        <Link to="/register" className="signup__link">Зарегистрироваться</Link>
-      </div> */}
+// сохраняем последние введённые данные
+    // нет смысла хранить пароль в LS, если на сервере мы пытались его скрыть
+    // useEffect(() => {
+    //     const previousEmail = localStorage.getItem('userName');
+    //     const previousPassword = localStorage.getItem('userPassword');
 
-// to be improved: добавить на форму noValidate
-
-
-    // const handleChangeEmail = (e) => {
-    //     setUserEmail(e.target.value);
-    // }
-
-    // const handleChangePassword = (e) => {
-    //     setUserPassword(e.target.value);
-    // }
+    //     previousEmail ? setUserEmail(previousEmail) : setUserEmail('');
+    //     previousPassword ? setUserPassword(previousPassword) : setUserPassword('');
+    // }, []);

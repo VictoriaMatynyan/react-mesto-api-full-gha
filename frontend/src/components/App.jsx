@@ -95,7 +95,6 @@ function App() {
         if (data.message) {
           setLoggedIn(true);
           setUserEmail(email);
-          localStorage.setItem('userId', 'true');
           navigate('/', { replace: true });
         }
       })
@@ -109,7 +108,6 @@ function App() {
   const handleLogOut = () => {
     auth.logout()
     .then(() => {
-      localStorage.removeItem('userId');
       setLoggedIn(false);
       setUserEmail(''); // очищаем e-mail
       navigate('/sign-in', {replace: true});

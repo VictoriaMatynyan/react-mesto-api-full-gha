@@ -3,7 +3,6 @@ const UnauthorizedError = require('../errors/unauthorized');
 
 const { JWT_SECRET, NODE_ENV } = process.env;
 
-// авторизация на чистых куках (автотесты не пропускают)
 module.exports = (req, res, next) => {
   let payload;
   try {

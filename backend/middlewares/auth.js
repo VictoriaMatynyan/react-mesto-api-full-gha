@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../errors/unauthorized');
 
+// eslint-disable-next-line no-unused-vars
 const { JWT_SECRET, NODE_ENV } = process.env;
 
 // module.exports = (req, res, next) => {
@@ -44,7 +45,7 @@ const { JWT_SECRET, NODE_ENV } = process.env;
 //   }
 // };
 
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
   if (req.cookies.jwt) {
     const token = req.cookies.jwt;
     try {
@@ -60,6 +61,8 @@ module.exports = (req, res, next) => {
   }
   next();
 };
+
+module.exports = auth;
 
 // на случай, если нужно будет откатиться на хранение токена в headers:
 // module.exports = (req, res, next) => {

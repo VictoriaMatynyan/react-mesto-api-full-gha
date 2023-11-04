@@ -3,13 +3,6 @@ const authRouter = require('express').Router();
 const { signinValidation, signupValidation } = require('../middlewares/celebrateValidation');
 const { createUser, login } = require('../controllers/users');
 
-// краш-тест сервера для ревью
-authRouter.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
-
 // роуты для логина и регистрации
 authRouter.post('/signin', signinValidation, login);
 authRouter.post('/signup', signupValidation, createUser);
